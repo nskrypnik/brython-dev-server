@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <script type="text/javascript" src="/src/brython.js"></script>
+    <script type="text/javascript" src="/src/brython_stdlib.js"></script>
+  </head>
+  <body onload="brython({pythonpath: ['/src'], debug: 1})">
+    <script type="text/python3">
+      # open websocket to refresh page when code is changed
+      from browser import websocket, window
+
+      def on_open(evt):
+        print('Websocket connection has been established')
+
+      def on_message(evt):
+        window.location.reload(True)
+
+      if window.location.protocol == 'https:':
+        ws_protocol = 'wss:'
+      else:
+        ws_protocol = 'ws:'
+
+      ws_uri = '{0}//{1}/ws/restart'.format(ws_protocol, window.location.host)
+
+      print(ws_uri)
+
+      ws = websocket.WebSocket(ws_uri)
+      ws.bind('open', on_open)
+      ws.bind('message', on_message)
+
+    </script>
+
+    <script type="text/python3">
+      import sys
+      import app
+      print(sys.path)
+    </script>
+  </body>
+</html>
